@@ -28,7 +28,7 @@
 </head>
 <body>
   <div class="chart-wrapper">
-    <h1>Prix spot de l’électricité vs ARENH - 2012 à 2020</h1>
+    <h1>Prix spot de l’électricité vs ARENH en France - 2012 à 2024</h1>
     <div class="legend-note">Unité : <strong>€/MWh</strong></div>
     <canvas id="chart"></canvas>
   </div>
@@ -80,7 +80,7 @@
         }
 
         // tri + filtre 2012-01 .. 2020-12
-        const from = "2012-01", to = "2020-12";
+        const from = "2012-01", to = "2024-12";
         const filtered = rows
           .sort((a,b)=>(a.sortKey+'').localeCompare(b.sortKey+''))
           .filter(r => (r.sortKey >= from && r.sortKey <= to));
