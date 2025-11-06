@@ -123,8 +123,7 @@
         borderWidth: 1.5,
         pointRadius: 0,
         tension: 0,
-        fill: false,
-        borderDash: [] // trait plein noir
+        fill: false
       };
 
       new Chart(ctx,{
@@ -142,8 +141,8 @@
               tension:0.25,
               fill:true
             },
-            arenhFixedDataset, // <-- ARENH fixe à 42 (trait plein noir)
-            avgLineDataset     // <-- Moyenne spot (pointillé noir)
+            arenhFixedDataset, // trait plein noir
+            avgLineDataset     // pointillé noir
           ]
         },
         options:{
@@ -152,7 +151,14 @@
           plugins:{
             legend:{
               position:"bottom",
-              labels:{ color:"#1f2937", font:{ size:13, weight:"600" } }
+              labels:{
+                color:"#1f2937",
+                font:{ size:13, weight:"600" },
+                usePointStyle: false,
+                boxWidth: 30,   // largeur du trait
+                boxHeight: 2,   // hauteur très fine
+                padding: 20
+              }
             },
             tooltip:{
               backgroundColor:"#fff", borderColor:"#e5e7eb", borderWidth:1,
