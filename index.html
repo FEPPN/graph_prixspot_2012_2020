@@ -28,7 +28,7 @@
 </head>
 <body>
   <div class="chart-wrapper">
-    <h1>Prix spot de l’électricité vs ARENH - 2012 à 202O</h1>
+    <h1>Prix spot de l’électricité vs ARENH - 2012 à 2020</h1>
     <div class="legend-note">Unité : <strong>€/MWh</strong></div>
     <canvas id="chart"></canvas>
   </div>
@@ -106,6 +106,47 @@
       grad.addColorStop(0,"rgba(90,82,255,0.20)");
       grad.addColorStop(1,"rgba(90,82,255,0.00)");
 
+      // === Ajout de la ligne de moyenne ===
+      const avg = spotVals.reduce((a,b)=>a+b,0) / spotVals.length;
+      const avgLineDataset = {
+        label: `Moyenne spot : ${avg.toFixed(2)} €/MWh`,
+        data: labels.map(() => avg),
+        borderColor: "rgba(90,82,255,0.6)",
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0,
+        fill: false,
+        borderDash: [2, 2]
+      };
+
+      const avgLinePlugin = {
+        id: "avgLineLabel",
+        afterDatasetsDraw(chart) {
+          const {ctx, chartArea, scales: {y}} = chart;
+          const yPix = y.getPixelForValue(avg);
+          if (yPix < chartArea.top || yPix > chartArea.bottom) return;
+
+          ctx.save();
+          const text = `Moyenne spot: ${avg.toFixed(2)} €/MWh`;
+          ctx.font = "12px Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          const pad = 4;
+          const x = chartArea.right - 6;
+          const w = ctx.measureText(text).width + pad*2;
+          const h = 18;
+
+          ctx.fillStyle = "rgba(255,255,255,0.9)";
+          ctx.fillRect(x - w, yPix - h/2, w, h);
+          ctx.strokeStyle = "rgba(0,0,0,0.08)";
+          ctx.strokeRect(x - w, yPix - h/2, w, h);
+
+          ctx.fillStyle = "#0b0f19";
+          ctx.fillText(text, x - pad, yPix);
+          ctx.restore();
+        }
+      };
+
       new Chart(ctx,{
         type:'line',
         data:{
@@ -131,7 +172,8 @@
               tension:0,
               fill:false,
               borderDash:[6,4]
-            }
+            },
+            avgLineDataset // <-- Ligne moyenne
           ]
         },
         options:{
@@ -172,7 +214,8 @@
               border:{ display:false }
             }
           }
-        }
+        },
+        plugins: [avgLinePlugin] // <-- Plugin pour afficher le label de moyenne
       });
     }
   </script>
