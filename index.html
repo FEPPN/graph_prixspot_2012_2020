@@ -142,8 +142,8 @@
               tension:0.25,
               fill:true
             },
-            arenhFixedDataset, // trait plein noir
-            avgLineDataset     // pointillé noir
+            arenhFixedDataset, // <-- ARENH fixe à 42 (trait plein noir)
+            avgLineDataset     // <-- Moyenne spot (pointillé noir)
           ]
         },
         options:{
@@ -152,23 +152,7 @@
           plugins:{
             legend:{
               position:"bottom",
-              labels:{
-                color:"#1f2937",
-                font:{ size:13, weight:"600" },
-                // 🔥 Personnalisation visuelle de la légende
-                usePointStyle: false,
-                generateLabels(chart) {
-                  const datasets = chart.data.datasets;
-                  return datasets.map((ds, i) => ({
-                    text: ds.label,
-                    strokeStyle: ds.borderColor,
-                    lineWidth: ds.borderWidth,
-                    hidden: !chart.isDatasetVisible(i),
-                    datasetIndex: i,
-                    lineDash: ds.borderDash || []
-                  }));
-                }
-              }
+              labels:{ color:"#1f2937", font:{ size:13, weight:"600" } }
             },
             tooltip:{
               backgroundColor:"#fff", borderColor:"#e5e7eb", borderWidth:1,
