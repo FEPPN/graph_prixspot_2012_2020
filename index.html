@@ -36,7 +36,7 @@
   <script>
     
     // --- CONFIG ---
-    const CSV_URL = "https://raw.githubusercontent.com/FEPPN/graph_prixspot_2012_2020/main/spot_arenh_2012_2025.csv"; // ton nouveau jeu de données
+    const CSV_URL = "https://raw.githubusercontent.com/FEPPN/graph_prixspot_2012_2020/main/spot_arenh_2012_2025.csv";
 
     // --- HELPERS ---
     const parseNumberSmart = (s) => Number(String(s ?? '').trim().replace(/\s+/g,'').replace(',', '.'));
@@ -45,7 +45,7 @@
       if (t>0) return '\t'; if (s>=c) return ';'; return ',';
     }
     const FR_MONTHS = {"janv.":1,"févr.":2,"mars":3,"avr.":4,"mai":5,"juin":6,"juil.":7,"août":8,"sept.":9,"oct.":10,"nov.":11,"déc.":12};
-    function toSortKey(ym){ // "janv. 2017" -> "2017-01"
+    function toSortKey(ym){
       const p=String(ym).trim().split(/\s+/);
       const m=FR_MONTHS[(p[0]||'').toLowerCase()], y=Number(p[1]);
       return (!m||!Number.isFinite(y)) ? ym : `${y}-${String(m).padStart(2,'0')}`;
@@ -62,7 +62,6 @@
         const sep = detectSep(lines[0]);
         const header = lines[0].split(sep).map(h => h.trim().toLowerCase());
 
-        // Colonnes attendues dans spot_arenh_2012_2025.csv
         const idxYM    = header.findIndex(h => /year[_\s-]*month|mois|p[eé]riode|yearmonth/.test(h) || h==="year_month");
         const idxSpot  = header.findIndex(h => /prix.*mwh|mwh.*prix|spot/.test(h) || h==="prix mwh");
         const idxArenh = header.findIndex(h => /arenh/.test(h) || h==="arenh price");
@@ -80,7 +79,6 @@
           rows.push({ label: ym, sortKey: toSortKey(ym), spot, arenh });
         }
 
-        // tri + filtre 2012-01 .. 2020-12
         const from = "2012-01", to = "2020-12";
         const filtered = rows
           .sort((a,b)=>(a.sortKey+'').localeCompare(b.sortKey+''))
@@ -91,8 +89,6 @@
         const arenhVals= filtered.map(r => r.arenh);
 
         drawChart(labels, spotVals, arenhVals);
-      
-
       })
       .catch(err => {
         console.error(err);
@@ -106,17 +102,29 @@
       grad.addColorStop(0,"rgba(90,82,255,0.20)");
       grad.addColorStop(1,"rgba(90,82,255,0.00)");
 
-      // === Ajout de la ligne de moyenne ===
+      // === Ligne moyenne spot ===
       const avg = spotVals.reduce((a,b)=>a+b,0) / spotVals.length;
       const avgLineDataset = {
-        label: `Moyenne prix spot`,
+        label: "Moyenne prix spot",
         data: labels.map(() => avg),
-        borderColor: "rgba(90,82,255,0.5)",
+        borderColor: "black",
         borderWidth: 1.5,
         pointRadius: 0,
         tension: 0,
         fill: false,
-        borderDash: [4, 4]
+        borderDash: [6, 4] // pointillé noir
+      };
+
+      // === Ligne ARENH à 42 ===
+      const arenhFixedDataset = {
+        label: "ARENH (42 €/MWh)",
+        data: labels.map(() => 42),
+        borderColor: "black",
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0,
+        fill: false,
+        borderDash: [] // trait plein noir
       };
 
       new Chart(ctx,{
@@ -134,18 +142,8 @@
               tension:0.25,
               fill:true
             },
-            {
-              label:"ARENH (€/MWh)",
-              data:arenhVals,
-              borderColor:"#334155",
-              backgroundColor:"transparent",
-              borderWidth:1.6,
-              pointRadius:0,
-              tension:0,
-              fill:false,
-              borderDash:[6,4]
-            },
-            avgLineDataset // <-- ligne moyenne
+            arenhFixedDataset, // <-- ARENH fixe à 42 (trait plein noir)
+            avgLineDataset     // <-- Moyenne spot (pointillé noir)
           ]
         },
         options:{
