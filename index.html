@@ -109,7 +109,7 @@
       // === Ajout de la ligne de moyenne ===
       const avg = spotVals.reduce((a,b)=>a+b,0) / spotVals.length;
       const avgLineDataset = {
-        label: `Moyenne spot`,
+        label: `Moyenne prix spot`,
         data: labels.map(() => avg),
         borderColor: "rgba(90,82,255,0.5)",
         borderWidth: 1.5,
