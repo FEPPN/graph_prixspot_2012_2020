@@ -30,7 +30,6 @@
   <div class="chart-wrapper">
     <h1>Prix spot de l’électricité vs ARENH - 2012 à 202O</h1>
     <div class="legend-note">Unité : <strong>€/MWh</strong></div>
-    <div id="avg-price" class="legend-note" style="font-weight:600; color:#0b0f19"></div>
     <canvas id="chart"></canvas>
   </div>
 
@@ -92,10 +91,7 @@
         const arenhVals= filtered.map(r => r.arenh);
 
         drawChart(labels, spotVals, arenhVals);
-        // --- CALCUL ET AFFICHAGE DE LA MOYENNE ---
-const avg = spotVals.reduce((a,b)=>a+b,0) / spotVals.length;
-document.getElementById('avg-price').innerHTML = 
-  `Moyenne du prix spot (2012–2020) : <strong>${avg.toFixed(2)} €/MWh</strong>`;
+      
 
       })
       .catch(err => {
